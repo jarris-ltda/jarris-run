@@ -1,0 +1,30 @@
+{
+  "name": "dino3d",
+  "version": "1.0.0",
+  "description": "Play the game here: https://misheus.github.io/dino3d/low.html  \r Alt. version with best quality settings for high-end PCs: https://misheus.github.io/dino3d/",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "gulp": "^5.0.0",
+    "gulp-autoprefixer": "^8.0.0",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-livereload": "^4.0.2",
+    "gulp-minify": "^3.1.0",
+    "gulp-rename": "^2.0.0",
+    "gulp-rigger": "^0.5.8",
+    "gulp-sass": "^5.1.0",
+    "sass": "^1.77.8"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Misheus/dino3d.git"
+  },
+  "author": "Priler",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/Misheus/dino3d/issues"
+  },
+  "homepage": "https://misheus.github.io/dino3d/"
+}
