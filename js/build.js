@@ -96,12 +96,12 @@
         // console.log(e.keyCode);
         setKeyFromKeyCode(e.keyCode, true);
       });
-
+ 
       window.addEventListener('keyup', (e) => {
         setKeyFromKeyCode(e.keyCode, false);
       });
-
-
+      
+      
       //mouse
 
       window.addEventListener('mousedown', (e) => {
@@ -127,10 +127,10 @@
         setKey('space', false);
         setKey('down', false);
       });
-
-
-
-
+      
+      
+      
+      
     }
 
     update() {
@@ -413,7 +413,7 @@ class EnemyManager {
 			let enemiesGroup = this.pool.getItem(rand);
 
 			for(let i = 0; i < enemiesGroup.length; i++) {
-
+				
 				// position Y
 				enemiesGroup[i].position.y = nature.cache.ground.box.max.y + -nature.cache.ground.box.min.y - 2.5;
 
@@ -469,7 +469,7 @@ class EnemyManager {
 					}
 
 				} else {
-
+					
 					// ptero
 					enemiesGroup[0].position.x = 0;
 					enemiesGroup[0].position.y = this.get_ptero_y();
@@ -1235,7 +1235,7 @@ if(config.logs) {
 
         if( this.currentFrame > this.frames.length - 1 )
             this.currentFrame = 0;
-
+        
         // console.log("FRAME: " + this.currentFrame);
 
         if(!input.keys.down.down) {
@@ -1384,7 +1384,7 @@ let player = new PlayerManager();
 
 /**
  * Nature class v2.
- *
+ * 
  * @type {NatureManager}
  */
 
@@ -1469,7 +1469,7 @@ class NatureManager {
         "desert_skull": {
           "rescale_rand": [.15, .3],
           "x_random_range": [-3, 3],
-          "z_random_rotate": [-60, 60],
+          "z_random_rotate": [-80, 80],
           "y_random_rotate": [-30, 30]
         },
         "scorpion": {
@@ -1692,7 +1692,7 @@ class NatureManager {
     // spawn runner ground chunks
     for(let i = 0; i < chunks; i++) {
       let chunk = new THREE.Mesh( this.cache.ground_decoration.geometry, this.cache.ground_decoration.material );
-
+      
       chunk.scale.set(3, 2, 3);
       chunk.position.x = x;
       chunk.position.y = y;
@@ -2622,8 +2622,8 @@ class EffectsManager {
             "shadow_radius": 1
           },
           "night": {
-            "ambient": 0,
-            "direct": .1,
+            "ambient": 0.1,
+            "direct": 0.2,
             "shadow_radius": 10
           }
         },
@@ -2677,7 +2677,7 @@ class EffectsManager {
 
           scene.fog.color.setRGB(this.daytime.fog.night.color[0], this.daytime.fog.night.color[1], this.daytime.fog.night.color[2]);
           scene.background.setRGB(this.daytime.background.night.color[0], this.daytime.background.night.color[1], this.daytime.background.night.color[2]);
-
+        
           DLight.shadow.radius = this.daytime.intensity.night.shadow_radius;
         } else {
           // step
@@ -2698,7 +2698,7 @@ class EffectsManager {
 
           scene.fog.color.setRGB(this.daytime.fog.day.color[0], this.daytime.fog.day.color[1], this.daytime.fog.day.color[2]);
           scene.background.setRGB(this.daytime.background.day.color[0], this.daytime.background.day.color[1], this.daytime.background.day.color[2]);
-
+        
           DLight.shadow.radius = this.daytime.intensity.day.shadow_radius;
         } else {
           // inc
@@ -2707,7 +2707,7 @@ class EffectsManager {
 
           scene.fog.color.add(this.daytime.fog.diff_cache);
           scene.background.add(this.daytime.background.diff_cache);
-
+        
           DLight.shadow.radius = parseFloat((DLight.shadow.radius + (this.daytime.intensity.night.shadow_radius - this.daytime.intensity.day.shadow_radius) * inc).toFixed(5));
         }
       }
@@ -2815,7 +2815,7 @@ class EffectsManager {
         }
       }
 
-
+      
     }
   }
 let effects = new EffectsManager();

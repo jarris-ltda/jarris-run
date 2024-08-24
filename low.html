@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>T-Rex Run 3D</title>
+	<title>Jarri's Run</title>
 	<meta name="viewport" content="width=device-width, user-scalable=no">
 
 	<!-- Custom CSS -->
@@ -11,7 +11,7 @@
 	<!-- Preload -->
 	<link rel="preload" as="image" href="media/repeat.png" />
 	<link rel="preload" as="image" href="media/preloader-dino.png">
-	<link rel="preload" as="image" href="media/3d-title.png">
+
 
 </head>
 <body>
@@ -32,32 +32,32 @@
 	                <div class="face side-a"></div>
 	                <div class="face side-b"></div>
 	                <div class="face side-1">
-	                    <div class="growing-bar"></div>
+	                    <div class="growing-b ar"></div>
 	                </div>
 	            </div>
 	        </div>
 		</div>
 	</div>
 
-	<div id="chrome-no-internet">
-		<div class="poster"></div>
-		<h1>Нет подключения к Интернету</h1>
-		<div class="info">
-			<p>Попробуйте сделать следующее:</p>
-			<ul>
-				<li>Проверьте сетевые кабели, модем и маршрутизатор.</li>
-				<li>Подключитесь к сети Wi-Fi ещё раз.</li>
-				<li id="game-start" class="hidden">&laquo;Начать игру&raquo;</li>
-			</ul>
-			<small>ERR_LOADING_ASSETS</small>
-			<small id="game-load-progress">0%</small>
-		</div>
-	</div>
+    <div id="chrome-no-internet">
+        <div class="poster"></div>
+        <h1>Sin conexión a internet</h1>
+        <div class="info">
+            <p>Pruebe lo siguiente:</p>
+            <ul>
+                <li>Verifique sus cables de red, módem y router.</li>
+                <li>Conectate nuevamente a la red Wi-Fi.</li>
+                <li id="game-start" class="hidden">&laquo;!Iniciar Juego!&raquo;</li>
+            </ul>
+            <small>ERR_LOADING_ASSETS</small>
+            <small id="game-load-progress">0%</small>
+        </div>
+    </div>
 
-	<div id="game-restart" class="hidden">
-		<h1>ИГРА ЗАКОНЧЕНА</h1>
-		<img src="media/repeat.png">
-	</div>
+    <div id="game-restart" class="hidden">
+        <h1>Vuelve a intentarlo</h1>
+        <img src="media/repeat.png">
+    </div>
 
 	<script src="libs/three/three.min.js"></script>
 	<script src="libs/three/controls/OrbitControls.js"></script>

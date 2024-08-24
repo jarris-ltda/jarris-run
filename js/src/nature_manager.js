@@ -1,6 +1,6 @@
 /**
  * Nature class v2.
- *
+ * 
  * @type {NatureManager}
  */
 
@@ -85,8 +85,8 @@ class NatureManager {
         "desert_skull": {
           "rescale_rand": [.15, .3],
           "x_random_range": [-3, 3],
-          "z_random_rotate": [-60, 60],
-          "y_random_rotate": [0]
+          "z_random_rotate": [-80, 80],
+          "y_random_rotate": [-30, 30]
         },
         "scorpion": {
           "rescale_rand": [.3, .7], // [.3, .7]
@@ -308,7 +308,7 @@ class NatureManager {
     // spawn runner ground chunks
     for(let i = 0; i < chunks; i++) {
       let chunk = new THREE.Mesh( this.cache.ground_decoration.geometry, this.cache.ground_decoration.material );
-
+      
       chunk.scale.set(3, 2, 3);
       chunk.position.x = x;
       chunk.position.y = y;

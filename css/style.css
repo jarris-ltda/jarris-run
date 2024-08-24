@@ -785,7 +785,7 @@ END // CHART'S RULES
   display: list-item;
 }
 #chrome-no-internet > .info > ul #game-start {
-  color: #7FD133;
+  color: #d13333;
   font-weight: 500;
   cursor: pointer;
 }
