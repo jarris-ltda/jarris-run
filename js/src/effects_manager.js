@@ -27,8 +27,8 @@ class EffectsManager {
             "shadow_radius": 1
           },
           "night": {
-            "ambient": 0.1,
-            "direct": 0.2,
+            "ambient": 0.2,
+            "direct": 0.3,
             "shadow_radius": 10
           }
         },
