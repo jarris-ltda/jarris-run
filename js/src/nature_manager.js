@@ -1,6 +1,6 @@
 /**
  * Nature class v2.
- * 
+ *
  * @type {NatureManager}
  */
 
@@ -102,9 +102,9 @@ class NatureManager {
           "x_random_range": [-3, 3],
         },
         "trees": {
-          "rescale_rand": [.8, 3],
-          "x_random_range": [-3, 3],
-          "y_random_rotate": [-80, 80]
+          "rescale_rand": [3, 3],
+          "x_random_range": [-3, -3],
+          "y_random_rotate": [-80,-80]
         },
         "fish": {
           "rescale_rand": [.1, .4],
@@ -308,7 +308,7 @@ class NatureManager {
     // spawn runner ground chunks
     for(let i = 0; i < chunks; i++) {
       let chunk = new THREE.Mesh( this.cache.ground_decoration.geometry, this.cache.ground_decoration.material );
-      
+
       chunk.scale.set(3, 2, 3);
       chunk.position.x = x;
       chunk.position.y = y;
@@ -381,152 +381,134 @@ class NatureManager {
   async initMisc() {
     // get vox
     let vox = load_manager.get_vox('misc');
-
     // set cache
     this.cache.misc = {
       "geometry": await load_manager.get_mesh_geometry('misc'),
       "material": await load_manager.get_mesh_material('misc')
     };
 
-    for(let l in this.config.levels) {
+    for (let l in this.config.levels) {
       let level = this.config.levels[l];
       let randLevel = this.ground_chunks_decoration_levels[l];
-
-      if(!level.spawn) {
+      if (!level.spawn) {
         delete this.config.levels[l];
         continue;
       }
 
       // spawn misc according to level
-      for(let i = 0; i < level.max_amount; i++) {
-
-        // get misc
-        let rand
+      for (let i = 0; i < level.max_amount; i++) {
         let misc = null;
-        if(level.spawn == '*') {
-          // any from all
+        let rand = null;
+        if (level.spawn == '*') {
           rand = Math.floor(Math.random() * load_manager.assets['misc'].mesh.length);
           misc = new THREE.Mesh(
-            this.cache.misc.geometry[rand],
-            this.cache.misc.material[rand]
+              this.cache.misc.geometry[rand],
+              this.cache.misc.material[rand]
           );
         } else {
-          // any from given list
           rand = level.spawn[Math.floor(Math.random() * level.spawn.length)];
           misc = new THREE.Mesh(
-            this.cache.misc.geometry[rand],
-            this.cache.misc.material[rand]
+              this.cache.misc.geometry[rand],
+              this.cache.misc.material[rand]
           );
         }
-
-        // basic misc setup
         misc.misc_type = vox[rand].misc_type;
-        let misc_type = misc.misc_type.split('/')[0]; // local
+        let misc_type = misc.misc_type.split('/')[0];
+
+        // Check if config.misc_items[misc_type] is defined
+        if (!this.config.misc_items[misc_type]) {
+          console.warn(`Missing config for misc type: ${misc_type}`);
+          continue;
+        }
+
         misc.castShadow = true;
         misc.receiveShadow = true;
         misc.randLevel = randLevel;
 
-        // set X position according to level
-        if( "x_random_range" in level ) {
-          // level override
-          if( Array.isArray(level.x_random_range) ) {
-            // all
-            misc.position.x = this.random(
-              randLevel.x + level.x_random_range[1],
-              randLevel.x + level.x_random_range[0]
-            );
+        // Only set specific position for "trees"
+        if (misc_type === 'trees') {
+          misc.position.set(-50, 2.0, -20);
+          const treeSeparationZ = 150; // Adjust separation value as needed in Z
+
+          // Establish z position
+          if ((l in this.misc) && this.misc[l].length) {
+            // Ensure z separation
+            misc.position.z = this.misc[l][this.misc[l].length - 1].position.z - treeSeparationZ;
           } else {
-            // declared
-            misc.position.x = this.random(
-              randLevel.x + level.x_random_range[misc_type][1],
-              randLevel.x + level.x_random_range[misc_type][0]
-            );
+            misc.position.z = -20;
           }
+
+          // Set a fixed x position to avoid overlapping, adjust as needed
+          misc.position.x = -50;
+
+          // Make sure to set the y position correctly
+          misc.position.y = 2.0;
         } else {
-          // misc config
-          misc.position.x = this.random(
-            randLevel.x + this.config.misc_items[misc_type].x_random_range[1],
-            randLevel.x + this.config.misc_items[misc_type].x_random_range[0]
-          );
-        }
+          // set X position according to level
+          if (level.x_random_range) {
+            if (Array.isArray(level.x_random_range)) {
+              misc.position.x = this.random(randLevel.x + level.x_random_range[1], randLevel.x + level.x_random_range[0]);
+            } else {
+              misc.position.x = this.random(randLevel.x + level.x_random_range[misc_type][1], randLevel.x + level.x_random_range[misc_type][0]);
+            }
+          } else if (this.config.misc_items[misc_type].x_random_range) {
+            misc.position.x = this.random(randLevel.x + this.config.misc_items[misc_type].x_random_range[1], randLevel.x + this.config.misc_items[misc_type].x_random_range[0]);
+          }
+          misc.init_x = misc.position.x;
 
-        misc.init_x = misc.position.x;
-
-        // Other positioning (init)
-        if("behavior" in this.config.misc_items[misc_type]) {
-          // Special behavior
-          if(this.config.misc_items[misc_type].behavior == 'roll') {
-            // roll behavior
-            misc.geometry.center();
-            misc.position.y = randLevel.box.max.y + 0.6;
-            misc.position.z = randLevel.box.max.y;
-
-            misc.rotation.y = this.config.misc_items[misc_type].y_rotate;
-            misc.rotate_vel = this.random(this.config.misc_items[misc_type].random_rotate_vel[0], this.config.misc_items[misc_type].random_rotate_vel[1]);
-          } else if(this.config.misc_items[misc_type].behavior == 'move') {
-            // walk behavior
+          if (this.config.misc_items[misc_type].behavior) {
+            if (this.config.misc_items[misc_type].behavior == 'roll') {
+              misc.geometry.center();
+              misc.position.y = randLevel.box.max.y + 0.6;
+              misc.position.z = randLevel.box.max.y;
+              misc.rotation.y = this.config.misc_items[misc_type].y_rotate;
+              misc.rotate_vel = this.random(this.config.misc_items[misc_type].random_rotate_vel[0], this.config.misc_items[misc_type].random_rotate_vel[1]);
+            } else if (this.config.misc_items[misc_type].behavior == 'move') {
+              misc.position.y = randLevel.box.max.y;
+              if (typeof this.config.misc_items[misc_type].z_random_rotate !== 'undefined') {
+                let zRandomRotate = this.random(this.config.misc_items[misc_type].z_random_rotate[0], this.config.misc_items[misc_type].z_random_rotate[1]);
+                misc.rotateZ(THREE.Math.degToRad(zRandomRotate));
+              }
+              if (typeof this.config.misc_items[misc_type].y_random_rotate !== 'undefined') {
+                let yRandomRotate = this.random(this.config.misc_items[misc_type].y_random_rotate[0], this.config.misc_items[misc_type].y_random_rotate[1]);
+                misc.rotateY(THREE.Math.degToRad(yRandomRotate));
+              }
+            }
+          } else {
             misc.position.y = randLevel.box.max.y;
-
-            // Z random rotate
-            if(typeof(this.config.misc_items[misc_type].z_random_rotate) !== 'undefined') {
+            if (typeof this.config.misc_items[misc_type].z_random_rotate !== 'undefined') {
               let zRandomRotate = this.random(this.config.misc_items[misc_type].z_random_rotate[0], this.config.misc_items[misc_type].z_random_rotate[1]);
               misc.rotateZ(THREE.Math.degToRad(zRandomRotate));
             }
-
-            // Y random rotate
-            if(typeof(this.config.misc_items[misc_type].y_random_rotate) !== 'undefined') {
+            if (typeof this.config.misc_items[misc_type].y_random_rotate !== 'undefined') {
               let yRandomRotate = this.random(this.config.misc_items[misc_type].y_random_rotate[0], this.config.misc_items[misc_type].y_random_rotate[1]);
               misc.rotateY(THREE.Math.degToRad(yRandomRotate));
             }
-          }
-        } else {
-          // all other mesh types
-          misc.position.y = randLevel.box.max.y;
-
-          // Z random rotate
-          if(typeof(this.config.misc_items[misc_type].z_random_rotate) !== 'undefined') {
-            let zRandomRotate = this.random(this.config.misc_items[misc_type].z_random_rotate[0], this.config.misc_items[misc_type].z_random_rotate[1]);
-            misc.rotateZ(THREE.Math.degToRad(zRandomRotate));
-          }
-
-          // Y random rotate
-          if(typeof(this.config.misc_items[misc_type].y_random_rotate) !== 'undefined') {
-            let yRandomRotate = this.random(this.config.misc_items[misc_type].y_random_rotate[0], this.config.misc_items[misc_type].y_random_rotate[1]);
-            misc.rotateY(THREE.Math.degToRad(yRandomRotate));
-          }
-
-          // Y add
-          if(typeof(this.config.misc_items[misc_type].y_add) !== 'undefined') {
-            misc.position.y += this.config.misc_items[misc_type].y_add;
+            if (typeof this.config.misc_items[misc_type].y_add !== 'undefined') {
+              misc.position.y += this.config.misc_items[misc_type].y_add;
+            }
           }
         }
 
-        // Rescale mesh
         let rescaleRand = this.random(this.config.misc_items[misc_type].rescale_rand[0], this.config.misc_items[misc_type].rescale_rand[1]);
         misc.scale.set(rescaleRand, rescaleRand, rescaleRand);
 
         // Set Z initial position
-        let zRand = this.get_z('misc', l);
-        if((l in this.misc) && this.misc[l].length) {
-          // tail z
-          misc.position.z = -(-this.misc[l][this.misc[l].length-1].position.z + zRand);
-        } else {
-          // first z
-          misc.position.z = zRand;
+        if (misc_type !== 'trees') {
+          let zRand = this.get_z('misc', l);
+          if ((l in this.misc) && this.misc[l].length) {
+            misc.position.z = -(-this.misc[l][this.misc[l].length - 1].position.z + zRand);
+          } else {
+            misc.position.z = zRand;
+          }
         }
 
-        // add to level pool
-        if(!(l in this.misc)) {
+        if (!(l in this.misc)) {
           this.misc[l] = [];
         }
-
         this.misc[l].push(misc);
-
-        // add to scene
         scene.add(misc);
       }
-
-      // set last mesh index
       this.misc[l].leader = level.max_amount - 1;
     }
   }
